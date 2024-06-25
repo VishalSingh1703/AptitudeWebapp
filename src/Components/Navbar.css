@@ -1,0 +1,94 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  top: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImg {
+  height: 40px;
+  width: 120px;
+  margin-top: 5px;
+}
+
+.rightIcons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.darkModeButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 20px;
+}
+
+.loginButton {
+  background: linear-gradient(to top right, #e3342f, #ef5753);
+  border: 1px solid #cc1f1a;
+  border-radius: 0.375rem; /* rounded-lg */
+  padding: 0.625rem 1rem; /* px-4 py-2.5 */
+  margin: 0.25rem; /* m-1 */
+  cursor: pointer;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+.loginButton:hover {
+  background: linear-gradient(to top right, #e3342f, #e3342f);
+}
+
+.loginButton:active {
+  border-color: #cc1f1a;
+  box-shadow: none;
+}
+.logoutButton {
+  background: linear-gradient(to top right, #e3342f, #ef5753);
+  border: 1px solid #cc1f1a;
+  border-radius: 0.375rem; /* rounded-lg */
+  padding: 0.625rem 1rem; /* px-4 py-2.5 */
+  margin: 0.25rem; /* m-1 */
+  cursor: pointer;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+.logoutButton:hover {
+  background: linear-gradient(to top right, #e3342f, #e3342f);
+}
+
+.logoutButton:active {
+  border-color: #cc1f1a;
+  box-shadow: none;
+}
+.nav-ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-ul li {
+  display: inline;
+  padding-top: 20px;
+}
+
+.nav-ul li a {
+  text-decoration: none;
+  color: inherit;
+  padding: 10px;
+  border-radius: 5px;
+  /* transition: background-color 0.3s; */
+}
+
+.nav-ul li a:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
