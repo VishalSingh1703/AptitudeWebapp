@@ -12,6 +12,7 @@ const QuestionList = () => {
   const [solvedCount, setSolvedCount] = useState(0);
   const { darkMode } = useTheme();
   const { isLoggedIn } = useAuth();
+  const token = localStorage.getItem('token');
   const navigate = useNavigate(); 
 
   useEffect(() => {
@@ -38,8 +39,9 @@ const QuestionList = () => {
     try {
       const response = await axios.post(
         `http://localhost:3000/markquestion`,
-        { questionId }
-        );
+        { questionId, topic: path },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
     } catch (error) {
       console.log(error);
     }

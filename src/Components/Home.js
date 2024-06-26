@@ -6,19 +6,20 @@ import { useTheme } from "../ThemeContext";
 
 const Home = () => {
   const [topicsWithQuestions, setTopicsWithQuestions] = useState([]);
-  const { darkMode } = useTheme();
+  const { darkMode } = useTheme();  // dark mode ke liye use ho raha hai
 
   useEffect(() => {
+    // Number of Questions count karne ke liye use ho raha hai
     const fetchTopicData = async () => {
       try {
         const promises = topics.map(async (topic) => {
           const response = await axios.get(
             `http://localhost:3000/questions${topic.path}`
           );
-          const totalQuestions = response.data.length;
+          const totalQuestions = response.data.length; // see right here, it is calculating the number of questions
           return {
-            ...topic,
-            totalQuestions,
+            ...topic,    // Name of each topic
+            totalQuestions, // total count of questions used for progressbar
           };
         });
 
@@ -77,11 +78,11 @@ const Home = () => {
                 <div
                   style={{
                     ...styles.progressBar,
-                    width: `${(topic.solved / topic.total) * 100}%`
+                    width: `${(topic.solved / topic.total) * 100}%` // rendering the red line of the progress bar
                   }}
                 ></div>
               </div>
-              <Link
+              <Link // this is the link to each topic. This is what is triggers the post method in the server.js
                 to={`/questions${topic.path}`}
                 style={{
                   ...styles.topicCard,
@@ -89,7 +90,7 @@ const Home = () => {
                   color: darkMode ? "#fff" : "#333",
                 }}
               >
-                {topic.title}
+                {topic.title} 
                 <span style={styles.arrowContainer}>
                   <span
                     style={{

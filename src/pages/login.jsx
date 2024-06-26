@@ -29,6 +29,14 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      // const responseForMarkQuestion = await fetch("http://localhost:3000/login", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(user),
+      // });
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
@@ -93,12 +101,12 @@ const Login = () => {
               htmlFor="email"
               style={{ ...styles.label, color: darkMode ? "#ccc" : "#000" }}
             >
-              Email
+              Email    
             </label>
             <input
               type="email"
               name="email"
-              value={user.email}
+              value={user.email} // The user email is entered.
               onChange={handleInput}
               placeholder="Enter your email"
               style={styles.input}
@@ -114,7 +122,7 @@ const Login = () => {
             <input
               type="password"
               name="password"
-              value={user.password}
+              value={user.password}  // The pasword
               onChange={handleInput}
               placeholder="Enter your password"
               style={styles.input}
