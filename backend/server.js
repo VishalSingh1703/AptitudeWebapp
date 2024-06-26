@@ -34,6 +34,47 @@ async function run() {
       });
     }
 
+
+    app.get('/user/progress', authenticateToken, async (req, res) => {
+      try {
+        const userId = req.user.id;
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    
+        if (!user) {
+          return res.status(404).json({ msg: 'User not found' });
+        }
+    
+        const progress = Object.keys(user.completedQuestions || {}).reduce((acc, topic) => {
+          acc[topic] = user.completedQuestions[topic].length;
+          return acc;
+        }, {});
+    
+        res.status(200).json({ progress });
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+        res.status(500).json({ msg: 'Internal Server Error' });
+      }
+    });
+    
+
+
+    app.get('/user/completed-questions', authenticateToken, async (req, res) => {
+      try {
+        const userId = req.user.id;
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    
+        if (!user) {
+          return res.status(404).json({ msg: 'User not found' });
+        }
+    
+        res.status(200).json({ completedQuestions: user.completedQuestions || {} });
+      } catch (error) {
+        console.error('Error fetching completed questions:', error);
+        res.status(500).json({ msg: 'Internal Server Error' });
+      }
+    });
+    
+
     app.get("/questions/:path", async (req, res) => {
       const path = req.params.path;
       req.path = path; // Set the request-specific path variable

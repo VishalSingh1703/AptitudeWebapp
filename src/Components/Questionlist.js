@@ -10,6 +10,8 @@ const QuestionList = () => {
   const { path } = useParams();
   const [questions, setQuestions] = useState([]);
   const [solvedCount, setSolvedCount] = useState(0);
+  const [completedQuestions, setCompletedQuestions] = useState({});
+  const [progress, setProgress] = useState({});
   const { darkMode } = useTheme();
   const { isLoggedIn } = useAuth();
   const token = localStorage.getItem('token');
@@ -30,6 +32,39 @@ const QuestionList = () => {
     fetchQuestions();
   }, [path]);
 
+  useEffect(() => {
+    const fetchCompletedQuestions = async () => {
+      if (!isLoggedIn) return;
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/user/completed-questions`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setCompletedQuestions(response.data.completedQuestions);
+      } catch (error) {
+        console.error("Error fetching completed questions:", error);
+      }
+    };
+
+    const fetchProgress = async () => {
+      if (!isLoggedIn) return;
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/user/progress`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setProgress(response.data.progress);
+      } catch (error) {
+        console.error("Error fetching progress:", error);
+      }
+    };
+
+    fetchCompletedQuestions();
+    fetchProgress();
+  }, [isLoggedIn, token]);
+
   const handleCheckboxChange = async (checked, questionId) => {
     if (!isLoggedIn) {
       navigate("/login");
@@ -37,17 +72,39 @@ const QuestionList = () => {
     }
     setSolvedCount(solvedCount + (checked ? 1 : -1));
     try {
-      const response = await axios.post(
+      await axios.post(
         `http://localhost:3000/markquestion`,
         { questionId, topic: path },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      setCompletedQuestions(prev => {
+        const updated = { ...prev };
+        if (!updated[path]) {
+          updated[path] = [];
+        }
+        if (checked) {
+          updated[path].push(questionId);
+        } else {
+          updated[path] = updated[path].filter(id => id !== questionId);
+        }
+        return updated;
+      });
+
+      setProgress(prev => {
+        const updated = { ...prev };
+        if (checked) {
+          updated[path] = (updated[path] || 0) + 1;
+        } else {
+          updated[path] = (updated[path] || 1) - 1;
+        }
+        return updated;
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Find the current topic based on the path
   const currentTopic = topics.find((topic) => topic.path === `/${path}`);
 
   return (
@@ -79,7 +136,7 @@ const QuestionList = () => {
             <div
               style={{
                 ...styles.progressBar,
-                width: `${(solvedCount / questions.length) * 100}%`,
+                width: `${(progress[path] / questions.length) * 100}%`,
               }}
             ></div>
           </div>
@@ -89,7 +146,7 @@ const QuestionList = () => {
               color: darkMode ? "#ccc" : "#333",
             }}
           >
-            {solvedCount}/{questions.length} questions solved
+            {progress[path] || 0}/{questions.length} questions solved
           </div>
         </div>
         {questions.map((question, index) => (
@@ -98,6 +155,7 @@ const QuestionList = () => {
             question={question}
             index={index}
             onCheckboxChange={handleCheckboxChange}
+            checked={completedQuestions[path]?.includes(question._id)}
           />
         ))}
       </div>

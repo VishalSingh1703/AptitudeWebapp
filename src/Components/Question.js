@@ -5,7 +5,7 @@ import { useAuth } from "../store/auth"; // Import useAuth
 import { useNavigate } from "react-router-dom";
 import "./Question.css"; 
 
-const Question = ({ question, index, onCheckboxChange }) => {
+const Question = ({ question, index, onCheckboxChange, checked }) => {
   const { darkMode } = useTheme();
   const [open, setOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -47,7 +47,7 @@ const Question = ({ question, index, onCheckboxChange }) => {
           <label className="custom-checkbox">
             <input
               type="checkbox"
-              checked={isChecked}
+              checked={checked}
               onChange={handleCheckboxChange}
             />
             <span className="checkmark"></span>
