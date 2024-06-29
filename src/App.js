@@ -10,6 +10,8 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import Logout from "./pages/logout";
 import Navbar from "./Components/Navbar";
+import VerifyOTP from "./pages/verifyOTP";
+import ResetPassword from "./pages/resetPassword";
 
 function App() {
   return (
@@ -21,8 +23,10 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/questions/:path" element={<QuestionList />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/verifyOTP" element={<VerifyOTP />} />
+        <Route path="/resetPassword" element={<ResetPassword />} />
         <Route path="/logout" element={<Logout />} />
       </Routes>
       <Footer></Footer>

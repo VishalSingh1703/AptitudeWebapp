@@ -3,23 +3,26 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import topics from "../config/configuration";
 import { useTheme } from "../ThemeContext";
+import { useAuth } from "../store/auth"; // Import useAuth for authentication
 
 const Home = () => {
   const [topicsWithQuestions, setTopicsWithQuestions] = useState([]);
-  const { darkMode } = useTheme();  // dark mode ke liye use ho raha hai
+  const { darkMode } = useTheme();
+  const { isLoggedIn } = useAuth();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    // Number of Questions count karne ke liye use ho raha hai
     const fetchTopicData = async () => {
       try {
         const promises = topics.map(async (topic) => {
           const response = await axios.get(
             `http://localhost:3000/questions${topic.path}`
           );
-          const totalQuestions = response.data.length; // see right here, it is calculating the number of questions
+          const totalQuestions = response.data.length;
           return {
-            ...topic,    // Name of each topic
-            totalQuestions, // total count of questions used for progressbar
+            ...topic,
+            totalQuestions,
+            solved: 0, // Initialize solved count
           };
         });
 
@@ -32,6 +35,31 @@ const Home = () => {
 
     fetchTopicData();
   }, []);
+
+  useEffect(() => {
+    const fetchProgressData = async () => {
+      if (!isLoggedIn) return;
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/user/progress`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const progressData = response.data.progress;
+
+        setTopicsWithQuestions((prevTopics) =>
+          prevTopics.map((topic) => ({
+            ...topic,
+            solved: progressData[topic.path.slice(1)] || 0, // Update solved count from progress data
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching progress data:", error);
+      }
+    };
+
+    fetchProgressData();
+  }, [isLoggedIn, token]);
 
   return (
     <div
@@ -78,11 +106,11 @@ const Home = () => {
                 <div
                   style={{
                     ...styles.progressBar,
-                    width: `${(topic.solved / topic.total) * 100}%` // rendering the red line of the progress bar
+                    width: `${(topic.solved / topic.totalQuestions) * 100}%`,
                   }}
                 ></div>
               </div>
-              <Link // this is the link to each topic. This is what is triggers the post method in the server.js
+              <Link
                 to={`/questions${topic.path}`}
                 style={{
                   ...styles.topicCard,
@@ -90,7 +118,7 @@ const Home = () => {
                   color: darkMode ? "#fff" : "#333",
                 }}
               >
-                {topic.title} 
+                {topic.title}
                 <span style={styles.arrowContainer}>
                   <span
                     style={{

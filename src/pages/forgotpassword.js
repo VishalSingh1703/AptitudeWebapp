@@ -5,9 +5,8 @@ import { useTheme } from "../ThemeContext";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState(""); // State to store the error message
+  const [error, setError] = useState("");
   const { darkMode } = useTheme();
-  
   const navigate = useNavigate();
 
   const handleInput = (e) => {
@@ -17,7 +16,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/forgotpassword", {
+      const response = await fetch("http://localhost:3000/forgotPassword", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,12 +25,9 @@ const ForgotPassword = () => {
       });
 
       if (response.ok) {
-        const responseData = await response.json();
-        console.log("after password reset: ", responseData);
-        navigate("/");
+        navigate("/verifyOTP", { state: { email } });
       } else {
         setError("Email not found! Please try again.");
-        console.log("Password reset failed");
       }
     } catch (error) {
       console.log(error);
@@ -84,6 +80,7 @@ const ForgotPassword = () => {
     </div>
   );
 };
+
 
 const styles = {
   container: {

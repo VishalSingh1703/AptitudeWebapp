@@ -14,8 +14,8 @@ const QuestionList = () => {
   const [progress, setProgress] = useState({});
   const { darkMode } = useTheme();
   const { isLoggedIn } = useAuth();
-  const token = localStorage.getItem('token');
-  const navigate = useNavigate(); 
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -55,7 +55,10 @@ const QuestionList = () => {
           `http://localhost:3000/user/progress`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setProgress(response.data.progress);
+        setProgress((prevProgress) => ({
+          ...prevProgress,
+          [path]: response.data.progress[path] || 0,
+        }));
       } catch (error) {
         console.error("Error fetching progress:", error);
       }
@@ -63,7 +66,7 @@ const QuestionList = () => {
 
     fetchCompletedQuestions();
     fetchProgress();
-  }, [isLoggedIn, token]);
+  }, [isLoggedIn, token, path]);
 
   const handleCheckboxChange = async (checked, questionId) => {
     if (!isLoggedIn) {
@@ -78,7 +81,7 @@ const QuestionList = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setCompletedQuestions(prev => {
+      setCompletedQuestions((prev) => {
         const updated = { ...prev };
         if (!updated[path]) {
           updated[path] = [];
@@ -86,12 +89,12 @@ const QuestionList = () => {
         if (checked) {
           updated[path].push(questionId);
         } else {
-          updated[path] = updated[path].filter(id => id !== questionId);
+          updated[path] = updated[path].filter((id) => id !== questionId);
         }
         return updated;
       });
 
-      setProgress(prev => {
+      setProgress((prev) => {
         const updated = { ...prev };
         if (checked) {
           updated[path] = (updated[path] || 0) + 1;
@@ -108,7 +111,14 @@ const QuestionList = () => {
   const currentTopic = topics.find((topic) => topic.path === `/${path}`);
 
   return (
-    <div style={{ backgroundColor: darkMode ? '#191919' : '#fff', minHeight: '100vh', paddingTop: '32px' ,paddingBottom: '32px'}}>
+    <div
+      style={{
+        backgroundColor: darkMode ? "#191919" : "#fff",
+        minHeight: "100vh",
+        paddingTop: "32px",
+        paddingBottom: "32px",
+      }}
+    >
       <div style={styles.container}>
         {currentTopic && (
           <div
@@ -136,7 +146,7 @@ const QuestionList = () => {
             <div
               style={{
                 ...styles.progressBar,
-                width: `${(progress[path] / questions.length) * 100}%`,
+                width: `${((progress[path] || 0) / questions.length) * 100}%`,
               }}
             ></div>
           </div>
@@ -159,7 +169,6 @@ const QuestionList = () => {
           />
         ))}
       </div>
-      
     </div>
   );
 };
